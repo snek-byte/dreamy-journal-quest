@@ -1,14 +1,8 @@
 
 import React from 'react';
-import { BookOpen, Settings } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import { useJournal } from '@/lib/journal-context';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { SettingsDialog } from './settings/SettingsDialog';
 
 export function Navbar() {
   const { xp, streak } = useJournal();
@@ -33,18 +27,7 @@ export function Navbar() {
             </div>
           </div>
           
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Settings className="w-5 h-5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem>Settings</DropdownMenuItem>
-              <DropdownMenuItem>Profile</DropdownMenuItem>
-              <DropdownMenuItem>Theme</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <SettingsDialog />
         </div>
       </div>
     </nav>
