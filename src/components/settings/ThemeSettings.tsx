@@ -1,5 +1,5 @@
 
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, Type } from "lucide-react";
 import { useTheme } from "next-themes";
 import { Button } from "@/components/ui/button";
 import {
@@ -7,14 +7,34 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useState, useEffect } from "react";
+
+const fonts = [
+  { name: "Inter", class: "font-sans" },
+  { name: "Playfair Display", class: "font-playfair" },
+  { name: "Lora", class: "font-lora" },
+];
 
 export function ThemeSettings() {
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  const [currentFont, setCurrentFont] = useState("Inter");
+
+  // Prevent hydration mismatch
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+
+  const handleFontChange = (fontName: string) => {
+    setCurrentFont(fontName);
+    document.documentElement.className = `${theme === 'dark' ? 'dark' : ''} ${
+      fonts.find(f => f.name === fontName)?.class || 'font-sans'
+    }`;
+  };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
         <span className="text-sm font-medium">Theme</span>
         <DropdownMenu>
@@ -35,6 +55,29 @@ export function ThemeSettings() {
             <DropdownMenuItem onClick={() => setTheme("system")}>
               System
             </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      <div className="flex justify-between items-center">
+        <span className="text-sm font-medium">Font</span>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="gap-2">
+              <Type className="h-4 w-4" />
+              {currentFont}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {fonts.map((font) => (
+              <DropdownMenuItem
+                key={font.name}
+                onClick={() => handleFontChange(font.name)}
+                className={font.class}
+              >
+                {font.name}
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

@@ -51,6 +51,8 @@ export default {
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
+        playfair: ['Playfair Display', 'serif'],
+        lora: ['Lora', 'serif'],
       },
       keyframes: {
         "accordion-down": {
