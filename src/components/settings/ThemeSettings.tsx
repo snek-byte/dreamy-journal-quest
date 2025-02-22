@@ -29,11 +29,13 @@ export function ThemeSettings() {
     setMounted(true);
   }, []);
 
+  // Initialize font on mount
   useEffect(() => {
-    const savedFont = localStorage.getItem('preferred-font');
-    if (savedFont) {
-      handleFontChange(savedFont);
-    }
+    const savedFont = localStorage.getItem('preferred-font') || "Inter";
+    const fontClass = fonts.find(f => f.name === savedFont)?.class || 'font-sans';
+    document.documentElement.classList.remove(...fonts.map(f => f.class));
+    document.documentElement.classList.add(fontClass);
+    setCurrentFont(savedFont);
   }, []);
 
   const handleThemeChange = (newTheme: string) => {
@@ -45,10 +47,18 @@ export function ThemeSettings() {
   };
 
   const handleFontChange = (fontName: string) => {
-    setCurrentFont(fontName);
-    localStorage.setItem('preferred-font', fontName);
     const fontClass = fonts.find(f => f.name === fontName)?.class || 'font-sans';
-    document.documentElement.className = `${theme === 'dark' ? 'dark' : ''} ${fontClass}`;
+    
+    // Remove all font classes first
+    document.documentElement.classList.remove(...fonts.map(f => f.class));
+    
+    // Add the new font class
+    document.documentElement.classList.add(fontClass);
+    
+    // Save the preference
+    localStorage.setItem('preferred-font', fontName);
+    setCurrentFont(fontName);
+    
     toast({
       title: "Font updated",
       description: `Font changed to ${fontName}`,
@@ -58,8 +68,6 @@ export function ThemeSettings() {
   if (!mounted) {
     return null;
   }
-
-  const currentTheme = theme === 'system' ? systemTheme : theme;
 
   return (
     <div className="space-y-6">
