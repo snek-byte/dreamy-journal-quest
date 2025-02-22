@@ -7,9 +7,9 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { useState, useEffect } from "react";
+import { toast } from "@/hooks/use-toast";
 
 const fonts = [
   { name: "Inter", class: "font-sans" },
@@ -18,20 +18,48 @@ const fonts = [
 ];
 
 export function ThemeSettings() {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
-  const [currentFont, setCurrentFont] = useState("Inter");
+  const [currentFont, setCurrentFont] = useState(() => 
+    localStorage.getItem('preferred-font') || "Inter"
+  );
 
   // Prevent hydration mismatch
-  useEffect(() => setMounted(true), []);
-  if (!mounted) return null;
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    const savedFont = localStorage.getItem('preferred-font');
+    if (savedFont) {
+      handleFontChange(savedFont);
+    }
+  }, []);
+
+  const handleThemeChange = (newTheme: string) => {
+    setTheme(newTheme);
+    toast({
+      title: "Theme updated",
+      description: `Theme switched to ${newTheme} mode`,
+    });
+  };
 
   const handleFontChange = (fontName: string) => {
     setCurrentFont(fontName);
-    document.documentElement.className = `${theme === 'dark' ? 'dark' : ''} ${
-      fonts.find(f => f.name === fontName)?.class || 'font-sans'
-    }`;
+    localStorage.setItem('preferred-font', fontName);
+    const fontClass = fonts.find(f => f.name === fontName)?.class || 'font-sans';
+    document.documentElement.className = `${theme === 'dark' ? 'dark' : ''} ${fontClass}`;
+    toast({
+      title: "Font updated",
+      description: `Font changed to ${fontName}`,
+    });
   };
+
+  if (!mounted) {
+    return null;
+  }
+
+  const currentTheme = theme === 'system' ? systemTheme : theme;
 
   return (
     <div className="space-y-6">
@@ -46,13 +74,13 @@ export function ThemeSettings() {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => setTheme("light")}>
+            <DropdownMenuItem onClick={() => handleThemeChange("light")}>
               Light
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("dark")}>
+            <DropdownMenuItem onClick={() => handleThemeChange("dark")}>
               Dark
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setTheme("system")}>
+            <DropdownMenuItem onClick={() => handleThemeChange("system")}>
               System
             </DropdownMenuItem>
           </DropdownMenuContent>
