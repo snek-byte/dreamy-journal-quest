@@ -1,13 +1,27 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import React from 'react';
+import { JournalProvider } from '@/lib/journal-context';
+import { Navbar } from '@/components/Navbar';
+import { JournalEntry } from '@/components/JournalEntry';
+import { EntriesFeed } from '@/components/EntriesFeed';
+import { Toaster } from '@/components/ui/toaster';
 
 const Index = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <JournalProvider>
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        
+        <main className="container py-20 space-y-8">
+          <div className="max-w-2xl mx-auto space-y-8">
+            <JournalEntry />
+            <EntriesFeed />
+          </div>
+        </main>
+        
+        <Toaster />
       </div>
-    </div>
+    </JournalProvider>
   );
 };
 
