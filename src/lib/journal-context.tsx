@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { toast } from "@/hooks/use-toast";
 
 type JournalEntry = {
   id: string;
